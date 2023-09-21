@@ -1,17 +1,17 @@
 package com.keduit.entity;
 
 import com.keduit.constant.ItemSellStatus;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name="tbl_item")
+@Table
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
 
    @Id
