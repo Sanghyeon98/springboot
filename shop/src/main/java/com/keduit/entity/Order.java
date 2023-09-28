@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Order {
     private Member member;
 
     // 양방향 매핑
-    @OneToMany(mappedBy = "order") //하나의 주문이 여러 개의 주문상품을 가지므로 List 자료형을 사용해서 매핑
+    @OneToMany(mappedBy = "order" ,cascade = CascadeType.ALL, orphanRemoval = true) //하나의 주문이 여러 개의 주문상품을 가지므로 List 자료형을 사용해서 매핑
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime orderDate; //주문일
@@ -33,7 +33,4 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus; //주문상태
 
-    private LocalDateTime regTime;
-
-    private LocalDateTime updateTime;
 }
