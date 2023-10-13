@@ -57,14 +57,17 @@
                 <td>
                     <a th:href="'/admin/item/'+${item.id}" th:text="${item.itemNm}"></a>
                 </td>
-                <td th:text="${item.itemSellStatus == T(com.shop.constant.ItemSellStatus).SELL} ? '판매중' : '품절'"></td>
+                <td th:text="${item.itemSellStatus == T(com.keduit.constant.ItemSellStatus).SELL} ? '판매중' : '품절'"></td>
                 <td th:text="${item.createdBy}"></td>
                 <td th:text="${item.regTime}"></td>
             </tr>
             </tbody>
         </table>
 
-        <div th:with="start=${(items.number/maxPage)*maxPage + 1}, end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})" >
+        <div th:with="start=${(items.number/maxPage)*maxPage + 1},
+         end=(${(items.totalPages == 0) ? 1 :
+         (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) :
+          items.totalPages)})" >
             <ul class="pagination justify-content-center">
 
                 <li class="page-item" th:classappend="${items.first}?'disabled'">
@@ -73,7 +76,7 @@
                     </a>
                 </li>
 
-                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page-1}?'active':''">
+                <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page - 1}?'active':''">
                     <a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
                 </li>
 
@@ -86,7 +89,7 @@
             </ul>
         </div>
 
-        <div class="form-inline justify-content-center" th:object="${itemSearchDto}">
+        <div class="form-inline justify-content-center" th:object="${itemSearchDTO}">
             <select th:field="*{searchDateType}" class="form-control" style="width:auto;">
                 <option value="all">전체기간</option>
                 <option value="1d">1일</option>

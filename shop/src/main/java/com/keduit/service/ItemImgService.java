@@ -1,13 +1,21 @@
 package com.keduit.service;
 
+import com.keduit.dto.ItemSearchDTO;
+import com.keduit.dto.MainItemDTO;
+import com.keduit.entity.Item;
 import com.keduit.entity.ItemImg;
 import com.keduit.repository.ItemImgRepository;
+import com.keduit.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +27,8 @@ public class ItemImgService {
 
     private final ItemImgRepository itemImgRepository;
 
+    private final ItemRepository itemRepository;
+
     private final FileService fileService;
 
     public void saveItemImg(ItemImg itemImg, MultipartFile itemImgFile)throws Exception{
@@ -28,10 +38,31 @@ public class ItemImgService {
 
         if(!StringUtils.isEmpty(oriImgName)){
             imgName = fileService.uploadFiles(itemImgLocation, oriImgName, itemImgFile.getBytes());
-            imgUrl = " /images/item/"+imgName;
+            imgUrl = "/images/item/"+imgName;
         }
 
         itemImg.updateItemImg(oriImgName,imgName,imgUrl);
         itemImgRepository.save(itemImg);
     }
+
+    public void updateItemImg(Long itemImgId, MultipartFile itemImgFile) throws Exception{
+
+        if (!itemImgFile.isEmpty()){
+            ItemImg savedItemImg = itemImgRepository.findById(itemImgId)
+                    .orElseThrow(EntityNotFoundException::new);
+            //기존 이미지 파일 삭제
+            if (!StringUtils.isEmpty(savedItemImg.getImgName())){
+                fileService.deleteFile(itemImgLocation + "/" + savedItemImg.getImgName());
+            }
+
+            String oriImgName = itemImgFile.getOriginalFilename();
+            String imgName = fileService.uploadFiles(itemImgLocation, oriImgName, itemImgFile.getBytes());
+            String imgUrl = "/images/item/" + imgName;
+            // find 메소드로 savedItemImg 객체는 이미 영속 상태에 올려져있음
+            // 이후 Repository.save 메소드 호출 필요없이 변경감지 기능으로 트랜잭션이 끝날 때 update 쿼리 자동 실행
+            savedItemImg.updateItemImg(oriImgName, imgName, imgUrl);
+        }
+    }
+
+
 }

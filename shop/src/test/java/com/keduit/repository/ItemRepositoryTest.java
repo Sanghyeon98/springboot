@@ -243,7 +243,7 @@ class ItemRepositoryTest {
     public void findItemDetailTest(){
         this.createItemList();
         Pageable pageable = PageRequest.of(1,10, Sort.by("price").descending());
-        List<Item> itemList = itemRepository.findByItemDetail("상세", pageable);
+        List<Item> itemList = itemRepository.findByItemDetail("상세");
         for (Item item: itemList){
             System.out.println("item = " + item);
         }
@@ -253,7 +253,7 @@ class ItemRepositoryTest {
     @DisplayName("nativeQuery 속성을 이용한 상품조회 테스트")
     public void findByItemDetailByNative(){
         this.createItemList();
-        List<Item> itemList = itemRepository.findByItemByNative("상세");
+        List<Item> itemList = itemRepository.findByItemDetailByNative("상세");
         for(Item item : itemList){
             System.out.println("item = " + item);
         }

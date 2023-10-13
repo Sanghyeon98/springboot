@@ -1,12 +1,15 @@
 package com.keduit.entity;
 
 import com.keduit.constant.ItemSellStatus;
+import com.keduit.dto.ItemFormDTO;
+import com.keduit.exception.OutOfStockException;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table
 @Builder
@@ -34,5 +37,20 @@ public class Item extends BaseEntity {
    @Enumerated(EnumType.STRING)
    private ItemSellStatus itemSellStatus; //상품 판매 상태
 
+   public void removeStock(int stockNumber){
+      int restStock = this.stockNumber - stockNumber;
+      if(restStock < 0){
+         throw new OutOfStockException("상품 재고가 부족합니다." +
+                 "(현재 재고 수량: "+this.stockNumber+")");
+      }
+      this.stockNumber = restStock;
+   }
 
+   public void updateItem(ItemFormDTO itemFormDTO){
+      this.itemNm = itemFormDTO.getItemNm();
+      this.price = itemFormDTO.getPrice();
+      this.stockNumber = itemFormDTO.getStockNumber();
+      this.itemDetail = itemFormDTO.getItemDetail();
+      this.itemSellStatus = itemFormDTO.getItemSellStatus();
+   }
 }
